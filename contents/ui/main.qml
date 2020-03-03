@@ -54,6 +54,8 @@ Item{
 
     readonly property bool isHorizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
 
+    Plasmoid.onActivated: toggle();
+
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null // current Latte v0.9 API
     //END  Latte Dock Communicator
@@ -75,6 +77,12 @@ Item{
         }
     }
 
+    function toggle() {
+        var command = 'qdbus org.kde.lattedock /Latte toggleHiddenState "' + plasmoid.configuration.latteLayout + '" "' + Screen.name + '" ' + plasmoid.configuration.screenEdge;
+        console.log("Executing command : " + command);
+        executable.exec(command);
+    }
+
     Latte.IconItem{
         id: icon
         anchors.centerIn: parent
@@ -84,11 +92,7 @@ Item{
 
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                var command = 'qdbus org.kde.lattedock /Latte toggleHiddenState "' + plasmoid.configuration.latteLayout + '" "' + Screen.name + '" ' + plasmoid.configuration.screenEdge;
-                console.log("Executing command : " + command);
-                executable.exec(command);
-            }
+            onClicked: toggle();
         }
     }
 
