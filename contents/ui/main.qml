@@ -98,10 +98,10 @@ Item{
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
+    }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: toggle();
-        }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: toggle();
     }
 }
