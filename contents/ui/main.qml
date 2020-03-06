@@ -86,9 +86,12 @@ Item{
     }
 
     function toggle() {
-        var options = 'org.kde.lattedock /Latte toggleHiddenState "' + plasmoid.configuration.layoutName + '" "' + root.screenName + '" ' + plasmoid.configuration.screenEdge;
-        var command = 'qdbus ' + options;
-        console.log("Executing command : " + command);
+        var command = 'dbus-send --type=method_call --dest=org.kde.lattedock /Latte org.kde.LatteDock.toggleHiddenState ';
+        var options = 'string:"' + plasmoid.configuration.layoutName + '" ';
+        options = options + 'string:"' + root.screenName + '" ';
+        options = options + 'int32:' + plasmoid.configuration.screenEdge;
+        command = command + options;
+
         executable.exec(command);
     }
 
