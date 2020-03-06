@@ -8,7 +8,7 @@ This is a Plasma 5 applet that shows and hides OnDemand Latte SideBars.
 </p>
 
 <p align="center">
-<img src="https://i.imgur.com/W9tzxwN.png" width="580"><br/>
+<img src="https://i.imgur.com/K9V4ope.png" width="580"><br/>
 <i>Settings</i>
 </p>
 
