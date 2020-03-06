@@ -26,6 +26,8 @@ import org.kde.plasma.plasmoid 2.0
 
 import org.kde.latte 0.2 as Latte
 
+import "icons" as Icons
+
 Item{
     id: root
 
@@ -38,23 +40,29 @@ Item{
     Layout.minimumHeight: -1
     Layout.preferredWidth: {
         if (isInLatte) {
-            return latteBridge.iconSize;
+            return Math.min(latteBridge.iconSize, plasmoid.configuration.maximumIconSize);
         }
 
-        return isHorizontal ? height : 64;
+        return isHorizontal ? Math.min(height, plasmoid.configuration.maximumIconSize) : height;
     }
 
     Layout.preferredHeight: {
         if (isInLatte) {
-            return latteBridge.iconSize;
+            return Math.min(latteBridge.iconSize, plasmoid.configuration.maximumIconSize);
         }
 
-        return isHorizontal ? width : 64;
+        return isHorizontal ? width : Math.min(width, plasmoid.configuration.maximumIconSize);
     }
+
+    Layout.maximumWidth: Layout.preferredWidth
+    Layout.maximumHeight: Layout.preferredHeight
 
     readonly property bool isHorizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
 
     Plasmoid.onActivated: toggle();
+
+    readonly property string iconSource: plasmoid.configuration.iconSource === "" ? Plasmoid.icon : plasmoid.configuration.iconSource
+    readonly property string screenName: plasmoid.configuration.screenName === "" ? Screen.name : plasmoid.configuration.screenName
 
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null // current Latte v0.9 API
@@ -78,16 +86,17 @@ Item{
     }
 
     function toggle() {
-        var command = 'qdbus org.kde.lattedock /Latte toggleHiddenState "' + plasmoid.configuration.latteLayout + '" "' + Screen.name + '" ' + plasmoid.configuration.screenEdge;
+        var options = 'org.kde.lattedock /Latte toggleHiddenState "' + plasmoid.configuration.layoutName + '" "' + root.screenName + '" ' + plasmoid.configuration.screenEdge;
+        var command = 'qdbus ' + options;
         console.log("Executing command : " + command);
         executable.exec(command);
     }
 
-    Latte.IconItem{
+
+    Icons.GeneralIcon{
         id: icon
         anchors.centerIn: parent
-        source: "gtk-index"
-        width: latteBridge.iconSize
+        width: Math.min(parent.width, parent.height)
         height: width
 
         MouseArea {
@@ -95,5 +104,4 @@ Item{
             onClicked: toggle();
         }
     }
-
 }

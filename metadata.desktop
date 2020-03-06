@@ -3,7 +3,7 @@ Name=Latte SideBar Button
 Comment=Show and hide Latte SideBars
 
 Encoding=UTF-8
-Icon=gtk-index
+Icon=view-list-text
 Type=Service
 
 X-Plasma-API=declarativeappletscript

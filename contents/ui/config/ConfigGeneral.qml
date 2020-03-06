@@ -18,133 +18,159 @@
 */
 
 import QtQuick 2.0
-import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
-import QtGraphicalEffects 1.0
+import QtQuick.Controls 1.0 as QtControls
+import QtQuick.Controls 2.5 as QtControls25
 
+import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.kirigami 2.5 as Kirigami
+
+import org.kde.kquickcontrolsaddons 2.0
 
 Item {
-    id: root
+    id: generalPage
+
+    width: childrenRect.width
+    height: childrenRect.height
+    implicitWidth: pageColumn.implicitWidth
+    implicitHeight: pageColumn.implicitHeight
+
+    property alias cfg_iconSource: generalPage.currentIconSource
+    property alias cfg_layoutName: layoutNameTxt.text
+    property alias cfg_maximumIconSize: iconMaxSizeSpn.value
+    property alias cfg_screenEdge: generalPage.screenEdgeCurrentValue
+    property alias cfg_screenName: screenNameTxt.text
 
     property bool vertical: (plasmoid.formFactor === PlasmaCore.Types.Vertical)
 
-    property alias cfg_lengthType: root.lengthType
-    property alias cfg_lengthPixels: lengthPixels.value
-    property alias cfg_lengthPercentage: lengthPercentage.value
+    property int screenEdgeCurrentValue: 5 /*Left*/
+    property string currentIconSource: ""
 
-    // used from the ui
-    readonly property real centerFactor: 0.3
-    readonly property int minimumWidth: 220
-    property int lengthType: 0
+    Component.onCompleted: currentIconSource = plasmoid.configuration.iconSource
 
-    ColumnLayout {
-        spacing: units.largeSpacing
-        Layout.fillWidth: true
+    IconDialog {
+        id: iconDialog
+        onIconNameChanged: currentIconSource = iconName;
+    }
 
-        GridLayout{
-            columns: 2
-            Label {
-                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
-                text: i18n("Length:")
-                horizontalAlignment: Text.AlignRight
+    PlasmaComponents.ContextMenu {
+        id: iconMenu
+        visualParent: iconButton
+
+        PlasmaComponents.MenuItem {
+            text: i18nc("@item:inmenu Open icon chooser dialog", "Choose...")
+            icon: "document-open-folder"
+            onClicked: iconDialog.open()
+        }
+
+        PlasmaComponents.MenuItem {
+            text: i18nc("@item:inmenu Reset icon to default", "Clear Icon")
+            icon: "edit-clear"
+            onClicked: generalPage.currentIconSource = "";
+        }
+    }
+
+    Kirigami.FormLayout {
+        id: pageColumn
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+
+        QtControls.Button {
+            id: iconButton
+            Layout.minimumWidth: units.iconSizes.large + units.smallSpacing * 2
+            Layout.maximumWidth: Layout.minimumWidth
+            Layout.minimumHeight: Layout.minimumWidth
+            Layout.maximumHeight: Layout.minimumWidth
+            height: Layout.minimumWidth
+
+            Kirigami.FormData.label: i18n("Icon:")
+
+            onClicked: {
+                checked = Qt.binding(function() {
+                    return iconMenu.status === PlasmaComponents.DialogStatus.Open;
+                })
+
+                iconMenu.open(0, height);
             }
 
-            ExclusiveGroup {
-                id: lengthTypeGroup
-                onCurrentChanged: {
-                    root.lengthType = current.type;
-                }
+            PlasmaCore.IconItem {
+                anchors.centerIn: parent
+                width: units.iconSizes.large
+                height: width
+                source: currentIconSource === "" ? plasmoid.icon : currentIconSource
+            }
+        }
+
+        RowLayout{
+            spacing: units.smallSpacing
+
+            QtControls.SpinBox{
+                id: iconMaxSizeSpn
+                minimumValue: 16
+                maximumValue: 256
+                suffix: " " + i18nc("pixels","px.")
             }
 
-            RowLayout {
-                RadioButton {
-                    id: usePixels
-                    checked: root.lengthType === type
-                    exclusiveGroup: lengthTypeGroup
+            QtControls.Label {
+                Layout.leftMargin: units.smallSpacing
+                text: "maximum"
+            }
+        }
 
-                    readonly property int type: 0 /*Pixels*/
-                }
+        Item {
+            Kirigami.FormData.isSection: true
+        }
 
-                SpinBox{
-                    id: lengthPixels
-                    Layout.minimumWidth: Math.max(lengthPixels.implicitWidth, lengthPercentage.implicitWidth)
+        QtControls.ComboBox {
+            id: iconSizeCmb
+            model: [i18n("Top"),
+                    i18n("Bottom"),
+                    i18n("Left"),
+                    i18n("Right")]
 
-                    minimumValue: 0
-                    maximumValue: 1024
-                    stepSize: 10
-                    suffix: " " + i18nc("pixels","px.")
-                }
+            currentIndex: plasmoid.configuration.screenEdge - screenEdgeFirstValue
+            onCurrentIndexChanged: generalPage.screenEdgeCurrentValue = currentIndex + screenEdgeFirstValue
+
+            readonly property int screenEdgeFirstValue: 3
+
+            Kirigami.FormData.label: i18n("On Demand SideBar:")
+        }
+
+        RowLayout {
+            spacing: units.smallSpacing
+
+            QtControls.TextField {
+                id: screenNameTxt
+                text: plasmoid.configuration.screenName
+                placeholderText: i18n("optional")
             }
 
-            Label {}
+            QtControls.Label {
+                Layout.leftMargin: units.smallSpacing
+                text: "screen name"
+            }
+        }
 
-            RowLayout {
-                RadioButton {
-                    id: usePercentage
-                    checked: root.lengthType === type
-                    exclusiveGroup: lengthTypeGroup
+        RowLayout {
+            spacing: units.smallSpacing
 
-                    readonly property int type: 1 /*Percentage*/
-                }
-
-                SpinBox {
-                    id: lengthPercentage
-                    Layout.minimumWidth: Math.max(lengthPixels.implicitWidth, lengthPercentage.implicitWidth)
-
-                    minimumValue: 0
-                    maximumValue: 1000
-                    stepSize: 20
-                    suffix: " %"
-                }
-
-                Label {
-                    height: lengthPercentage.height
-                    text: " " + i18n(" of panel thickness")
-                }
+            QtControls.TextField {
+                id: layoutNameTxt
+                text: plasmoid.configuration.layoutName
+                placeholderText: i18n("optional")
             }
 
-            Label {visible: plasmoid.configuration.containmentType === 2} /*Latte containmnent*/
-
-            RowLayout {
-                visible: plasmoid.configuration.containmentType === 2 /*Latte containmnent*/
-
-                RadioButton {
-                    id: latteIcon
-                    checked: root.lengthType === type
-                    exclusiveGroup: lengthTypeGroup
-
-                    readonly property int type: 3 /*Latte Icon*/
-                }
-
-                Label {
-                    height: lengthPercentage.height
-                    Layout.leftMargin: 4
-                    text: i18n("use Latte icon size")
-                }
-            }
-
-            Label {}
-
-            RowLayout {
-                RadioButton {
-                    id: useExpanded
-                    checked: root.lengthType === type
-                    exclusiveGroup: lengthTypeGroup
-
-                    readonly property int type: 2 /*Exclusive*/
-                }
-
-                Label {
-                    height: lengthPercentage.height
-                    Layout.leftMargin: 4
-                    text: i18n("fill available space")
-                }
-
-                SpinBox {
-                    opacity: 0
-                }
+            QtControls.Label {
+                Layout.leftMargin: units.smallSpacing
+                text: "layout"
             }
         }
     }
+
+
 }
+
