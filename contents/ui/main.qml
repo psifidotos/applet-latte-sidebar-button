@@ -63,7 +63,7 @@ Item{
     readonly property string screenName: plasmoid.configuration.screenName === "" ? Screen.name : plasmoid.configuration.screenName
 
     //BEGIN Latte Dock Communicator
-    property QtObject latteBridge: null // current Latte v0.9 API
+    property Item latteBridge: null // current Latte v0.9 API
     //END  Latte Dock Communicator
 
     //BEGIN Latte based properties
