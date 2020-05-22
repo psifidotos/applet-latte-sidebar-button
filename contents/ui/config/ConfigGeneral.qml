@@ -20,7 +20,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0 as QtControls
-import QtQuick.Controls 2.5 as QtControls25
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
