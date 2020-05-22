@@ -1,5 +1,9 @@
 ### CHANGELOG
 
+#### Version 0.1.2
+
+* remove no needed dependency form config window
+
 #### Version 0.1.1
 
 * support latest libraries from Latte git version
