@@ -93,12 +93,13 @@ Item{
         executable.exec(command);
     }
 
-
-    Icons.GeneralIcon{
+    PlasmaCore.IconItem {
         id: icon
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
+        roundToIconSize: !isInLatte
+        source: root.iconSource
     }
 
     MouseArea {
