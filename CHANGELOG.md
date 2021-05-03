@@ -1,5 +1,11 @@
 ### CHANGELOG
 
+#### Version 0.2.0
+
+* provide All Edges option in order to trigger docks and panels independent of their screen edge
+* provide Dock, Panel Name option in order to filter which docks panels you want to handle
+* use Plasma.IconItem and remove any Latte icons dependency
+
 #### Version 0.1.2
 
 * remove no needed dependency form config window
