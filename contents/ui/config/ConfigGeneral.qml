@@ -41,6 +41,7 @@ Item {
     property alias cfg_maximumIconSize: iconMaxSizeSpn.value
     property alias cfg_screenEdge: generalPage.screenEdgeCurrentValue
     property alias cfg_screenName: screenNameTxt.text
+    property alias cfg_viewName: viewNameTxt.text
 
     property bool vertical: (plasmoid.formFactor === PlasmaCore.Types.Vertical)
 
@@ -129,10 +130,24 @@ Item {
             model: [i18n("Top"),
                     i18n("Bottom"),
                     i18n("Left"),
-                    i18n("Right")]
+                    i18n("Right"),
+                    i18n("All Edges")]
 
-            currentIndex: plasmoid.configuration.screenEdge - screenEdgeFirstValue
-            onCurrentIndexChanged: generalPage.screenEdgeCurrentValue = currentIndex + screenEdgeFirstValue
+            currentIndex: {
+                if (plasmoid.configuration.screenEdge === PlasmaCore.Types.Floating)  {
+                    return 4;
+                }
+
+                return plasmoid.configuration.screenEdge - screenEdgeFirstValue
+            }
+            onCurrentIndexChanged: {
+                if (currentIndex === 4 /*All Edges*/) {
+                    generalPage.screenEdgeCurrentValue = PlasmaCore.Types.Floating;
+                    return;
+                }
+
+                generalPage.screenEdgeCurrentValue = currentIndex + screenEdgeFirstValue
+            }
 
             readonly property int screenEdgeFirstValue: 3
 
@@ -143,7 +158,24 @@ Item {
             spacing: units.smallSpacing
 
             QtControls.TextField {
+                id: viewNameTxt
+                Layout.minimumWidth: 160
+                text: plasmoid.configuration.viewName
+                placeholderText: i18n("optional")
+            }
+
+            QtControls.Label {
+                Layout.leftMargin: units.smallSpacing
+                text: "dock or panel name"
+            }
+        }
+
+        RowLayout {
+            spacing: units.smallSpacing
+
+            QtControls.TextField {
                 id: screenNameTxt
+                Layout.minimumWidth: 160
                 text: plasmoid.configuration.screenName
                 placeholderText: i18n("optional")
             }
@@ -159,6 +191,7 @@ Item {
 
             QtControls.TextField {
                 id: layoutNameTxt
+                Layout.minimumWidth: 160
                 text: plasmoid.configuration.layoutName
                 placeholderText: i18n("optional")
             }

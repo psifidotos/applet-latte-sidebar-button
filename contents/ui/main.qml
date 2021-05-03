@@ -84,6 +84,7 @@ Item{
     function toggle() {
         var command = 'dbus-send --type=method_call --dest=org.kde.lattedock /Latte org.kde.LatteDock.toggleHiddenState ';
         var options = 'string:"' + plasmoid.configuration.layoutName + '" ';
+        options = options + 'string:"' + plasmoid.configuration.viewName + '" ';
         options = options + 'string:"' + root.screenName + '" ';
         options = options + 'int32:' + plasmoid.configuration.screenEdge;
         command = command + options;

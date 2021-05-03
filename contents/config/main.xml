@@ -14,12 +14,15 @@
          <label>maximum icon size</label>
     </entry>     
      <entry name="screenEdge" type="Int">
-         <default>5</default>
-         <label>in which screen edge the latte sidebar is found, it is required</label>
+         <default>0</default>
+         <label>in which screen edge the latte sidebar is found, it is required, 0 stands for AllEdges</label>
     </entry>
     <entry name="layoutName" type="String">
         <label>in which latte layout the sidebar is found, it is optional</label>
     </entry>
+    <entry name="viewName" type="String">
+        <label>what is the dock panel name, it is optional</label>
+    </entry>    
     <entry name="screenName" type="String">
         <label>in which screen the latte sidebar if found, it is optional</label>
     </entry>
