@@ -1,5 +1,8 @@
 ### CHANGELOG
 
+#### Version 0.2.1
+* fix edge default value in config window
+
 #### Version 0.2.0
 
 * provide All Edges option in order to trigger docks and panels independent of their screen edge
