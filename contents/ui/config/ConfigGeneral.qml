@@ -45,7 +45,7 @@ Item {
 
     property bool vertical: (plasmoid.formFactor === PlasmaCore.Types.Vertical)
 
-    property int screenEdgeCurrentValue: 5 /*Left*/
+    property int screenEdgeCurrentValue: 4 /*AllEdges*/
     property string currentIconSource: ""
 
     Component.onCompleted: currentIconSource = plasmoid.configuration.iconSource
@@ -126,7 +126,7 @@ Item {
         }
 
         QtControls.ComboBox {
-            id: iconSizeCmb
+            id: edgeCmb
             model: [i18n("Top"),
                     i18n("Bottom"),
                     i18n("Left"),
